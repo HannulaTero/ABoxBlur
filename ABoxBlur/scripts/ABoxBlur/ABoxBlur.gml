@@ -55,9 +55,9 @@ function ABoxBlur(_dst, _src, _blur)
     timer : undefined,
     Swap  : function()
     {
-      var _tmp = dst;
-      dst = src;
-      src = _tmp;
+      var _tmp = ABoxBlur.tmp.dst;
+      ABoxBlur.tmp.dst = ABoxBlur.tmp.src;
+      ABoxBlur.tmp.src = _tmp;
     }
   };
   
@@ -137,15 +137,18 @@ function ABoxBlur(_dst, _src, _blur)
     {
       // Have to enlarge the surface.
       surface_free(ABoxBlur.tmp.dst);
-      ABoxBlur.layout[0] = _w;
-      ABoxBlur.layout[1] = _h;
-      ABoxBlur.texels[0] = (1.0 / _w);
-      ABoxBlur.texels[1] = (1.0 / _h);
     }
   }
   
   if (surface_exists(ABoxBlur.tmp.dst) == false)
   {
+    var _w = surface_get_width(_src);
+    var _h = surface_get_height(_src);
+    ABoxBlur.layout[0] = _w;
+    ABoxBlur.layout[1] = _h;
+    ABoxBlur.texels[0] = (1.0 / _w);
+    ABoxBlur.texels[1] = (1.0 / _h);
+    
     ABoxBlur.tmp.dst = surface_create(
       ABoxBlur.layout[0],
       ABoxBlur.layout[1],
@@ -197,6 +200,7 @@ function ABoxBlur(_dst, _src, _blur)
   
   
   gpu_push_state();
+  gpu_set_state(ABoxBlur.gpuState);
   shader_set(SHD_ABoxBlur_PrefixSum_Seed);
   {
     surface_set_target(ABoxBlur.tmp.dst);
@@ -216,6 +220,7 @@ function ABoxBlur(_dst, _src, _blur)
   
   
   gpu_push_state();
+  gpu_set_state(ABoxBlur.gpuState);
   shader_set(SHD_ABoxBlur_PrefixSum_Pass);
   {
     // Preparations.
@@ -225,26 +230,30 @@ function ABoxBlur(_dst, _src, _blur)
     var _h = ABoxBlur.active[1];
     
     // Set uniforms, which don't change with loop.
-    shader_set_uniform_f_array(_FSH_Jump, ABoxBlur.texels);
+    shader_set_uniform_f_array(_FSH_Texels, ABoxBlur.texels);
     
-    // Do the horizontal passes
+    // Do the horizontal passes.
+    var _woffset = 0;
     for(var i = 1; i < _w; i *= 2)
     {
       shader_set_uniform_f(_FSH_Jump, i, 0);
       surface_set_target(ABoxBlur.tmp.dst);
-      draw_surface_stretched(ABoxBlur.tmp.src, 0, 0, _w, _h);
+      draw_surface_stretched(ABoxBlur.tmp.src, _woffset, 0, _w - _woffset, _h);
       surface_reset_target();
       ABoxBlur.tmp.Swap();
+      _woffset = i;
     }
     
     // Do the vertical passes.
+    var _hoffset = 0;
     for(var i = 1; i < _h; i *= 2)
     {
-      shader_set_uniform_f(_FSH_Jump, i, 0);
+      shader_set_uniform_f(_FSH_Jump, 0, i);
       surface_set_target(ABoxBlur.tmp.dst);
-      draw_surface_stretched(ABoxBlur.tmp.src, 0, 0, _w, _h);
+      draw_surface_stretched(ABoxBlur.tmp.src, 0, _hoffset, _w, _h - _hoffset);
       surface_reset_target();
       ABoxBlur.tmp.Swap();
+      _hoffset = i;
     }
   }
   shader_reset();
@@ -259,6 +268,7 @@ function ABoxBlur(_dst, _src, _blur)
   
   
   gpu_push_state();
+  gpu_set_state(ABoxBlur.gpuState);
   shader_set(SHD_ABoxBlur_Apply);
   {
     // Preparations.
@@ -282,7 +292,7 @@ function ABoxBlur(_dst, _src, _blur)
     
     // Apply the uniforms.
     // As temp-surfaces may be different size, it needs to be rescaled.
-    texture_set_stage(_FSH_Blur,    surface_get_texture(_blur));
+    texture_set_stage(_FSH_Blur, surface_get_texture(_blur));
     shader_set_uniform_f(_FSH_Multiply, _blurMultiplier, _blurMultiplier);
     shader_set_uniform_f(_FSH_Texels, 
       ABoxBlur.texels[0] * (ABoxBlur.layout[0] / _w),

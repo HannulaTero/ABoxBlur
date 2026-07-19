@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"DEBUG",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"DEBUG",
+  "parent":{
+    "name":"ABoxBlur",
+    "path":"ABoxBlur.yyp",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

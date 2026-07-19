@@ -62,7 +62,7 @@ void main()
   
   
   // Read the left operand.
-  vec4 lhs = Get(origin + FSH_Jump);
+  vec4 lhs = Get(origin - FSH_Jump);
   
   
   // As it is prefix sum, add them together.

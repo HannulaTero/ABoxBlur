@@ -25,6 +25,7 @@
     {"id":{"name":"OBJ_ABoxBlur_Example","path":"objects/OBJ_ABoxBlur_Example/OBJ_ABoxBlur_Example.yy",},},
     {"id":{"name":"RM_ABoxBlur_Example","path":"rooms/RM_ABoxBlur_Example/RM_ABoxBlur_Example.yy",},},
     {"id":{"name":"ABoxBlur","path":"scripts/ABoxBlur/ABoxBlur.yy",},},
+    {"id":{"name":"DEBUG","path":"scripts/DEBUG/DEBUG.yy",},},
     {"id":{"name":"SHD_ABoxBlur_Apply","path":"shaders/SHD_ABoxBlur_Apply/SHD_ABoxBlur_Apply.yy",},},
     {"id":{"name":"SHD_ABoxBlur_PrefixSum_Pass","path":"shaders/SHD_ABoxBlur_PrefixSum_Pass/SHD_ABoxBlur_PrefixSum_Pass.yy",},},
     {"id":{"name":"SHD_ABoxBlur_PrefixSum_Seed","path":"shaders/SHD_ABoxBlur_PrefixSum_Seed/SHD_ABoxBlur_PrefixSum_Seed.yy",},},

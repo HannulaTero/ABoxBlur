@@ -1,25 +1,22 @@
 /// @desc 
 
+var _w = room_width;
+var _h = room_height;
+
 // Verify surfaces exist.
 if (surface_exists(self.surface.dst) == false)
 {
-  self.surface.dst = surface_create(
-    room_width, room_height
-  );
+  self.surface.dst = surface_create(_w, _h);
 }
 
 if (surface_exists(self.surface.src) == false)
 {
-  self.surface.src = surface_create(
-    room_width, room_height
-  );
+  self.surface.src = surface_create(_w, _h);
 }
 
 if (surface_exists(self.surface.blur) == false)
 {
-  self.surface.blur = surface_create(
-    room_width, room_height
-  );
+  self.surface.blur = surface_create(_w, _h);
 }
 
 
@@ -31,18 +28,26 @@ surface_reset_target();
 surface_set_target(self.surface.src);
 draw_clear_alpha(c_black, 1.0);
 draw_sprite_stretched(
-  SPR_ABoxBlur_Example_Scene, 0, 0, 0, room_width, room_height
+  SPR_ABoxBlur_Example_Scene, 0, 0, 0, _w, _h
 );
 surface_reset_target();
 
 surface_set_target(self.surface.blur);
-draw_clear_alpha(c_black, 1.0);
-draw_sprite(
-  SPR_ABoxBlur_Example_Blur, 0, mouse_x, mouse_y
-);
-draw_clear_alpha(c_black, 1.0);
-
-
+{
+  draw_clear_alpha(c_black, 1.0);
+  gpu_push_state();
+  {
+    var _angle = direction;
+    gpu_set_blendmode(bm_add);
+    // draw_sprite_ext(
+    //   SPR_ABoxBlur_Example_Blur, 0, 0, 0, 2, 2, _angle, c_white, 1.0
+    // );
+    draw_sprite_ext(
+      SPR_ABoxBlur_Example_Blur, 0, mouse_x, mouse_y, 2, 2, _angle, c_white, 1.0
+    );
+  }
+  gpu_pop_state();
+}
 surface_reset_target();
 
 

@@ -57,22 +57,22 @@ void main()
   vec2 origin = floor(gl_FragCoord.xy);
   
   // Sample the blur strength.
-  vec2 blur = texture2D(FSH_Blur, vCoord).rg * FSH_Multiply;
-  blur = max(vec2(0.5), blur);
+  vec2 blur = texture2D(FSH_Blur, vCoord).rg;
+  blur = max(vec2(0.5), blur * FSH_Multiply);
   
   // Offset divided in half, as sampled in both directions.
   vec4 offset = vec4(-blur, +blur) * 0.5;
   
-  // Multiplier to get the average of the area.
-  float predivided = (1.0 / (blur.x * blur.y));
+  // Get area coverage, used to average the sum.
+  float areaSize = (blur.x * blur.y);
   
   // Otherwise calculate the average of area.  
-  gl_FragData[0] = predivided * (
+  gl_FragData[0] = (
     + Get(origin + offset.xy) // top-left
     + Get(origin + offset.zw) // bottom-right
     - Get(origin + offset.xw) // bottom-left
     - Get(origin + offset.zx) // top-right
-  );
+  ) / areaSize;
 }
 
 

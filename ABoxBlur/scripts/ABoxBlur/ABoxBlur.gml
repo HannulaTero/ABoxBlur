@@ -12,6 +12,12 @@
 * 
 * This should be called in Draw-event.
 * 
+* This requires float32-textures, as summation can get large.
+* -> Reason: If surface of 1024x1024 has in average values 0.5, then total sum is over 500k
+* -> This well exceeds float16-texture, which is why it can't be used.
+* Alternatively rgba8unorm pixel could represent single color channel summation 
+* -> This becomes cumbersome, but allows higher compatibility.
+* 
 * @param {Id.Surface} _dst        Where blurred image is stored.
 * @param {Id.Surface} _src        The source image. Can be same as destination.
 * @param {Id.Surface} _blur       How box-blur is applied in source image.
@@ -50,23 +56,29 @@ function ABoxBlur(_dst, _src, _blur, _strength=64.0)
   
   // Helper surfaces.
   // -> Keep them cached/alive for short period, if function is called again.
-  static tmp = {
-    dst   : undefined,
-    src   : undefined,
-    timer : undefined,
-    Swap  : function()
-    {
-      var _tmp = ABoxBlur.tmp.dst;
-      ABoxBlur.tmp.dst = ABoxBlur.tmp.src;
-      ABoxBlur.tmp.src = _tmp;
-    }
+  static tempDst  = undefined;
+  static tempSrc  = undefined;
+  static timer    = undefined;
+  static Swap     = function()
+  {
+    var _tmp = ABoxBlur.tempDst;
+    ABoxBlur.tempDst = ABoxBlur.tempSrc;
+    ABoxBlur.tempSrc = _tmp;
   };
   
   
-  // The helper surface dimensions.
-  static layout = [ 1, 1 ]; // What is actual surface size for temporals.
-  static texels = [ 1, 1 ]; // What are the texels.
-  static active = [ 1, 1 ]; // What is active target area (active <= layout)
+#endregion
+//
+//=============================================================
+//
+#region PREPARATIONS.
+  
+  
+  var _layoutW = surface_get_width(_src);
+  var _layoutH = surface_get_height(_src);
+  var _texelsW = (1.0 / _layoutW);
+  var _texelsH = (1.0 / _layoutH);
+  var _previosShader = shader_current();
   
 
 #endregion
@@ -101,6 +113,15 @@ function ABoxBlur(_dst, _src, _blur, _strength=64.0)
     return;
   }
   
+  if (_layoutW != surface_get_width(_dst))  
+  || (_layoutW != surface_get_width(_blur)) 
+  || (_layoutH != surface_get_height(_dst))
+  || (_layoutH != surface_get_height(_blur))
+  {
+    throw("[ABoxBlur] Surfaces size must match!");
+    return;
+  }
+  
   
 #endregion
 //
@@ -110,87 +131,55 @@ function ABoxBlur(_dst, _src, _blur, _strength=64.0)
   
   
   // Restart the cache deletion timer.
-  if (ABoxBlur.tmp.timer != undefined)
+  if (ABoxBlur.timer != undefined)
   {
-    call_cancel(ABoxBlur.tmp.timer);
+    call_cancel(ABoxBlur.timer);
   }
+  
   call_later(1, time_source_units_seconds, function()
   {
-    ABoxBlur.tmp.timer = undefined;
-    if (surface_exists(ABoxBlur.tmp.dst) == true)
+    ABoxBlur.timer = undefined;
+    if (surface_exists(ABoxBlur.tempDst) == true)
     {
-      surface_free(ABoxBlur.tmp.dst);
+      surface_free(ABoxBlur.tempDst);
     }
-    if (surface_exists(ABoxBlur.tmp.src) == true)
+    if (surface_exists(ABoxBlur.tempSrc) == true)
     {
-      surface_free(ABoxBlur.tmp.src);
+      surface_free(ABoxBlur.tempSrc);
     }
   });
   
   
   // Ensure cached surfaces have appropriate size.
-  if (surface_exists(ABoxBlur.tmp.dst) == true)
+  if (surface_exists(ABoxBlur.tempDst) == true)
   {
-    var _w = surface_get_width(_src);
-    var _h = surface_get_height(_src);
-    if (ABoxBlur.layout[0] < _w)
-    || (ABoxBlur.layout[1] < _h)
+    if (_layoutW != surface_get_width(ABoxBlur.tempDst))
+    || (_layoutH != surface_get_height(ABoxBlur.tempDst))
     {
-      // Have to enlarge the surface.
-      surface_free(ABoxBlur.tmp.dst);
+      surface_free(ABoxBlur.tempDst);
     }
   }
   
-  if (surface_exists(ABoxBlur.tmp.dst) == false)
+  if (surface_exists(ABoxBlur.tempSrc) == true)
   {
-    var _w = surface_get_width(_src);
-    var _h = surface_get_height(_src);
-    ABoxBlur.layout[0] = _w;
-    ABoxBlur.layout[1] = _h;
-    ABoxBlur.texels[0] = (1.0 / _w);
-    ABoxBlur.texels[1] = (1.0 / _h);
-    
-    ABoxBlur.tmp.dst = surface_create(
-      ABoxBlur.layout[0],
-      ABoxBlur.layout[1],
-      surface_rgba32float
-    );
-  }
-  
-  if (surface_exists(ABoxBlur.tmp.src) == true)
-  {
-    var _w = surface_get_width(ABoxBlur.tmp.src);
-    var _h = surface_get_height(ABoxBlur.tmp.src);
-    if (ABoxBlur.layout[0] < _w)
-    || (ABoxBlur.layout[1] < _h)
+    if (_layoutW != surface_get_width(ABoxBlur.tempSrc))
+    || (_layoutH != surface_get_height(ABoxBlur.tempSrc))
     {
-      // Have to enlarge the surface.
-      surface_free(ABoxBlur.tmp.src);
+      surface_free(ABoxBlur.tempSrc);
     }
   }
   
-  if (surface_exists(ABoxBlur.tmp.src) == false)
+  
+  // Ensure helper surfaces exist.
+  if (surface_exists(ABoxBlur.tempDst) == false)
   {
-    ABoxBlur.tmp.src = surface_create(
-      ABoxBlur.layout[0],
-      ABoxBlur.layout[1],
-      surface_rgba32float
-    );
+    ABoxBlur.tempDst = surface_create(_layoutW, _layoutH, surface_rgba32float);
   }
   
-  
-#endregion
-//
-//=============================================================
-//
-#region OTHER PREPARATIONS.
-  
-  
-  var _previosShader = shader_current();
-  
-  // Set the active area. 
-  ABoxBlur.active[0] = surface_get_width(_src);
-  ABoxBlur.active[1] = surface_get_height(_src);
+  if (surface_exists(ABoxBlur.tempSrc) == false)
+  {
+    ABoxBlur.tempSrc = surface_create(_layoutW, _layoutH, surface_rgba32float);
+  }
   
   
 #endregion
@@ -204,10 +193,10 @@ function ABoxBlur(_dst, _src, _blur, _strength=64.0)
   gpu_set_state(ABoxBlur.gpuState);
   shader_set(SHD_ABoxBlur_PrefixSum_Seed);
   {
-    surface_set_target(ABoxBlur.tmp.dst);
+    surface_set_target(ABoxBlur.tempDst);
     draw_surface(_src, 0, 0);
     surface_reset_target();
-    ABoxBlur.tmp.Swap();
+    ABoxBlur.Swap();
   }
   shader_reset();
   gpu_pop_state();
@@ -224,36 +213,40 @@ function ABoxBlur(_dst, _src, _blur, _strength=64.0)
   gpu_set_state(ABoxBlur.gpuState);
   shader_set(SHD_ABoxBlur_PrefixSum_Pass);
   {
-    // Preparations.
+    // Get uniforms.
     var _FSH_Jump   = shader_get_uniform(SHD_ABoxBlur_PrefixSum_Pass, "FSH_Jump");
     var _FSH_Texels = shader_get_uniform(SHD_ABoxBlur_PrefixSum_Pass, "FSH_Texels");
-    var _w = ABoxBlur.active[0];
-    var _h = ABoxBlur.active[1];
     
     // Set uniforms, which don't change with loop.
-    shader_set_uniform_f_array(_FSH_Texels, ABoxBlur.texels);
+    shader_set_uniform_f(_FSH_Texels, _texelsW, _texelsH);
     
     // Do the horizontal passes.
+    // Offset are used to avoid unnecessary fragments.
+    // -> But must allow previous results to be copied over.
     var _woffset = 0;
-    for(var i = 1; i < _w; i *= 2)
+    for(var i = 1; i < _layoutW; i *= 2)
     {
       shader_set_uniform_f(_FSH_Jump, i, 0);
-      surface_set_target(ABoxBlur.tmp.dst);
-      draw_surface_stretched(ABoxBlur.tmp.src, _woffset, 0, _w - _woffset, _h);
+      surface_set_target(ABoxBlur.tempDst);
+      draw_surface_stretched(ABoxBlur.tempSrc, 
+        _woffset, 0, _layoutW - _woffset, _layoutH
+      );
       surface_reset_target();
-      ABoxBlur.tmp.Swap();
+      ABoxBlur.Swap();
       _woffset = i;
     }
     
     // Do the vertical passes.
     var _hoffset = 0;
-    for(var i = 1; i < _h; i *= 2)
+    for(var i = 1; i < _layoutH; i *= 2)
     {
       shader_set_uniform_f(_FSH_Jump, 0, i);
-      surface_set_target(ABoxBlur.tmp.dst);
-      draw_surface_stretched(ABoxBlur.tmp.src, 0, _hoffset, _w, _h - _hoffset);
+      surface_set_target(ABoxBlur.tempDst);
+      draw_surface_stretched(ABoxBlur.tempSrc, 
+        0, _hoffset, _layoutW, _layoutH - _hoffset
+      );
       surface_reset_target();
-      ABoxBlur.tmp.Swap();
+      ABoxBlur.Swap();
       _hoffset = i;
     }
   }
@@ -274,7 +267,7 @@ function ABoxBlur(_dst, _src, _blur, _strength=64.0)
   var _original = _src;
   if (_dst == _src)
   {
-    _original = ABoxBlur.tmp.dst;
+    _original = ABoxBlur.tempDst;
     gpu_push_state();
     surface_set_target(_original);
     draw_surface(_src, 0, 0);
@@ -286,30 +279,23 @@ function ABoxBlur(_dst, _src, _blur, _strength=64.0)
   gpu_set_state(ABoxBlur.gpuState);
   shader_set(SHD_ABoxBlur_Apply);
   {
-    // Preparations.
-    var _FSH_Source   = shader_get_sampler_index(SHD_ABoxBlur_Apply, "FSH_Source");
-    var _FSH_Blur     = shader_get_sampler_index(SHD_ABoxBlur_Apply, "FSH_Blur");
-    var _FSH_Strength = shader_get_uniform(SHD_ABoxBlur_Apply, "FSH_Strength");
+    // Get shader uniforms.
+    var _FSH_TexSrc   = shader_get_sampler_index(SHD_ABoxBlur_Apply, "FSH_TexSrc");
+    var _FSH_TexBlur  = shader_get_sampler_index(SHD_ABoxBlur_Apply, "FSH_TexBlur");
     var _FSH_Layout   = shader_get_uniform(SHD_ABoxBlur_Apply, "FSH_Layout");
-    var _FSH_Texels   = shader_get_uniform(SHD_ABoxBlur_Apply, "FSH_Texels");
-    
-    var _w = surface_get_width(_dst);
-    var _h = surface_get_height(_dst);
+    var _FSH_Multiply = shader_get_uniform(SHD_ABoxBlur_Apply, "FSH_Multiply");
     
     // Apply the uniforms.
-    // As temp-surfaces may be different size, it needs to be rescaled.
-    texture_set_stage(_FSH_Source, surface_get_texture(_original));
-    texture_set_stage(_FSH_Blur, surface_get_texture(_blur));
-    shader_set_uniform_f(_FSH_Strength, _strength, _strength);
-    shader_set_uniform_f_array(_FSH_Layout, ABoxBlur.layout); 
-    shader_set_uniform_f(_FSH_Texels, 
-      ABoxBlur.texels[0] * (ABoxBlur.layout[0] / _w),
-      ABoxBlur.texels[1] * (ABoxBlur.layout[1] / _h)
-    );
+    texture_set_stage(_FSH_TexSrc,  surface_get_texture(_original));
+    texture_set_stage(_FSH_TexBlur, surface_get_texture(_blur));
+    shader_set_uniform_f(_FSH_Layout,   _layoutW, _layoutH);
+    shader_set_uniform_f(_FSH_Multiply, _strength, _strength);
     
     // Render to the destination.
     surface_set_target(_dst);
-    draw_surface_stretched(ABoxBlur.tmp.src, 0, 0, _w, _h);
+    draw_surface_stretched(ABoxBlur.tempSrc, 0, 0, 
+      surface_get_width(_dst), surface_get_height(_dst)
+    );
     surface_reset_target();
   }
   shader_reset();

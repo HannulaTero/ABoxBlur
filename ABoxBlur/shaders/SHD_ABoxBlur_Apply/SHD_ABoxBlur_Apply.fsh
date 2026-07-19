@@ -26,24 +26,12 @@ varying vec2 vCoord;
 
 
 // Uniforms.
-uniform sampler2D FSH_Source;
-uniform sampler2D FSH_Blur;
-uniform vec2 FSH_Strength;
+#define FSH_TexSums gm_BaseTexture
+uniform sampler2D FSH_TexSrc;
+uniform sampler2D FSH_TexBlur;
+
 uniform vec2 FSH_Layout;
-uniform vec2 FSH_Texels;
-
-
-#endregion
-// 
-//=============================================================
-//
-#region FUNCTIONS.
-
-
-vec4 Get(vec2 pos)
-{
-  return texture2D(gm_BaseTexture, (pos + 0.5) * FSH_Texels);
-}
+uniform vec2 FSH_Multiply;
 
 
 #endregion
@@ -54,40 +42,43 @@ vec4 Get(vec2 pos)
 
 
 void main()
-{
-  // Preparations.
-  vec2 origin = floor(gl_FragCoord.xy);
-  
+{  
   // Sample the blur strength.
-  // As blur is directted in both directions, half it.
-  vec2 blur = texture2D(FSH_Blur, vCoord).rg;
-  blur *= FSH_Strength * 0.5;
+  vec2 blur = texture2D(FSH_TexBlur, vCoord).rg;
+  vec2 dist = (blur * FSH_Multiply);
   
-  // Calculate the corners of box-blur.
-  vec2 lower = max(origin - blur, vec2(0.0));
-  vec2 upper = min(origin + blur, FSH_Layout - 1.0);
+  
+  // Calculate the corners of box-blur as pixels.
+  // Used to sample summed-table, clamp properly.
+  // Also in pixels, so averaging is easier.
+  vec2 origin = floor(gl_FragCoord.xy);
+  vec2 lower  = max(origin - dist, vec2(0.0));
+  vec2 upper  = min(origin + dist, FSH_Layout - 1.0);
   vec4 corner = vec4(lower, upper);
+  vec2 sides  = abs(upper - lower);
+  
+  
+  // Get the area sum with given corners.  
+  vec4 coords = (corner + 0.5) / FSH_Layout.xyxy;
+  vec4 summation = (
+    + texture2D(FSH_TexSums, coords.xy) // top-left
+    + texture2D(FSH_TexSums, coords.zw) // bottom-right
+    - texture2D(FSH_TexSums, coords.xw) // bottom-left
+    - texture2D(FSH_TexSums, coords.zy) // top-right
+  );
+  
   
   // Get area coverage, used to average the sum.
-  // -> As it might get clamped, then 
-  vec2 size = (upper - lower);
-  float area = (size.x * size.y);
-  area = max(1.0, area);
+  float areaSize = (sides.x * sides.y);
+  vec4 average = (summation / max(1.0, areaSize));
   
-  // Otherwise calculate the average of area.  
-  vec4 average = (
-    + Get(corner.xy) // top-left
-    + Get(corner.zw) // bottom-right
-    - Get(corner.xw) // bottom-left
-    - Get(corner.zy) // top-right
-  ) / area;
   
   // Blend between source-color and blur.
   // -> This is done to mitigate problems with blurs <= 1.0
-  vec4 source = texture2D(FSH_Source, vCoord);
-  float ratio = clamp(blur.x - 1.0, 0.0, 1.0);
+  vec4 source = texture2D(FSH_TexSrc, vCoord);
+  float ratio = clamp(areaSize - 1.0, 0.0, 1.0);
   
-  gl_FragColor = mix(source, average, vec4(ratio));
+  gl_FragData[0] = mix(source, average, vec4(ratio));
 }
 
 

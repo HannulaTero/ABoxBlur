@@ -4,6 +4,9 @@
 /*
   This does prefix-sum pass in given direction.
   
+  This uses exact pixel positions to ensure correct summation.
+  When using normalized coordinates there could be problems.
+  
   Requires floating-point textures!
 */
 #endregion

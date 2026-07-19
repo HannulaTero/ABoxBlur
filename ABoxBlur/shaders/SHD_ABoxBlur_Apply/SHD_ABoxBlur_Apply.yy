@@ -1,0 +1,12 @@
+{
+  "$GMShader":"",
+  "%Name":"SHD_ABoxBlur_Apply",
+  "name":"SHD_ABoxBlur_Apply",
+  "parent":{
+    "name":"ABoxBlur",
+    "path":"folders/ABoxBlur.yy",
+  },
+  "resourceType":"GMShader",
+  "resourceVersion":"2.0",
+  "type":1,
+}

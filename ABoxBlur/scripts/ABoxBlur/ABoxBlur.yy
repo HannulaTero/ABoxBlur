@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ABoxBlur",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ABoxBlur",
+  "parent":{
+    "name":"ABoxBlur",
+    "path":"folders/ABoxBlur.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -55,7 +55,7 @@ surface_reset_target();
 ABoxBlur(
   self.surface.dst,
   self.surface.src,
-  self.surface.blur
+  self.surface.blur, 128
 );
 
 

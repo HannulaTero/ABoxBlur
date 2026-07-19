@@ -12,11 +12,12 @@
 * 
 * This should be called in Draw-event.
 * 
-* @param {Id.Surface} _dst  Where blurred image is stored.
-* @param {Id.Surface} _src  The source image.
-* @param {Id.Surface} _blur How large the box-blur should be. If not floating-point, then blur is multiplied by 64.0
+* @param {Id.Surface} _dst        Where blurred image is stored.
+* @param {Id.Surface} _src        The source image. Can be same as destination.
+* @param {Id.Surface} _blur       How box-blur is applied in source image.
+* @param {Real}       _strength   Multiplier for blur - for normalized blur-texture really important.
 */ 
-function ABoxBlur(_dst, _src, _blur)
+function ABoxBlur(_dst, _src, _blur, _strength=64.0)
 {
 //=============================================================
 //
@@ -266,34 +267,41 @@ function ABoxBlur(_dst, _src, _blur)
 //
 #region APPLY THE BOX BLUR
   
+    
+    
+  // Check if source is same as destination,
+  // as this can't be done. If yes, use temporary target instead.
+  var _original = _src;
+  if (_dst == _src)
+  {
+    _original = ABoxBlur.tmp.dst;
+    gpu_push_state();
+    surface_set_target(_original);
+    draw_surface(_src, 0, 0);
+    surface_reset_target();
+    gpu_pop_state();
+  }
   
   gpu_push_state();
   gpu_set_state(ABoxBlur.gpuState);
   shader_set(SHD_ABoxBlur_Apply);
   {
     // Preparations.
+    var _FSH_Source   = shader_get_sampler_index(SHD_ABoxBlur_Apply, "FSH_Source");
     var _FSH_Blur     = shader_get_sampler_index(SHD_ABoxBlur_Apply, "FSH_Blur");
-    var _FSH_Multiply = shader_get_uniform(SHD_ABoxBlur_Apply, "FSH_Multiply");
+    var _FSH_Strength = shader_get_uniform(SHD_ABoxBlur_Apply, "FSH_Strength");
+    var _FSH_Layout   = shader_get_uniform(SHD_ABoxBlur_Apply, "FSH_Layout");
     var _FSH_Texels   = shader_get_uniform(SHD_ABoxBlur_Apply, "FSH_Texels");
     
     var _w = surface_get_width(_dst);
     var _h = surface_get_height(_dst);
     
-    var _blurMultiplier = 1.0;
-    var _format = surface_get_format(_blur);
-    if (_format != surface_rgba16float)
-    && (_format != surface_rgba32float)
-    && (_format != surface_r16float)
-    && (_format != surface_r32float)
-    {
-      _blurMultiplier = 64.0;
-    }
-    
-    
     // Apply the uniforms.
     // As temp-surfaces may be different size, it needs to be rescaled.
+    texture_set_stage(_FSH_Source, surface_get_texture(_original));
     texture_set_stage(_FSH_Blur, surface_get_texture(_blur));
-    shader_set_uniform_f(_FSH_Multiply, _blurMultiplier, _blurMultiplier);
+    shader_set_uniform_f(_FSH_Strength, _strength, _strength);
+    shader_set_uniform_f_array(_FSH_Layout, ABoxBlur.layout); 
     shader_set_uniform_f(_FSH_Texels, 
       ABoxBlur.texels[0] * (ABoxBlur.layout[0] / _w),
       ABoxBlur.texels[1] * (ABoxBlur.layout[1] / _h)

@@ -3,8 +3,8 @@
   "%Name":"SHD_ABoxBlur_Apply",
   "name":"SHD_ABoxBlur_Apply",
   "parent":{
-    "name":"ABoxBlur",
-    "path":"folders/ABoxBlur.yy",
+    "name":"Shaders",
+    "path":"folders/ABoxBlur/Shaders.yy",
   },
   "resourceType":"GMShader",
   "resourceVersion":"2.0",

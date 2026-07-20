@@ -16,7 +16,7 @@
 * -> Reason: If surface of 1024x1024 has in average values 0.5, then total sum is over 500k
 * -> This well exceeds float16-texture, which is why it can't be used.
 * Alternatively rgba8unorm pixel could represent single color channel summation 
-* -> This becomes cumbersome, but allows higher compatibility.
+* -> This is more cumbersome, but allows higher compatibility.
 * 
 * @param {Id.Surface} _dst        Where blurred image is stored.
 * @param {Id.Surface} _src        The source image. Can be same as destination.
@@ -91,9 +91,19 @@ function ABoxBlur(_dst, _src, _blur, _strength=64.0)
   // Sanity check.
   if (surface_format_is_supported(surface_rgba32float) == false)
   {
-    throw("[ABoxBlur] Surface format RGBA32FLOAT is not supported!");
+    throw("[ABoxBlur] Required RGBA32FLOAT is not supported!");
     return;
   }
+  
+  if (os_type == os_gxgames) 
+  || (os_browser != browser_not_a_browser)
+  {
+    // From own tests HTML5 doesn't work, and GX has too many artefacts.
+    // Therefore unusable.
+    throw("[ABoxBlur] Not supported on browsers!");
+    return;
+  }
+  
   
   if (surface_exists(_dst) == false)
   {
@@ -127,7 +137,7 @@ function ABoxBlur(_dst, _src, _blur, _strength=64.0)
 //
 //=============================================================
 //
-#region PREPARE THE HELPER SURFACES.
+#region HANDLE CACHE REMOVAL.
   
   
   // Restart the cache deletion timer.
@@ -168,6 +178,13 @@ function ABoxBlur(_dst, _src, _blur, _strength=64.0)
       surface_free(ABoxBlur.tempSrc);
     }
   }
+  
+
+#endregion
+//
+//=============================================================
+//
+#region ENSURE HELPER SURFACES EXIST.
   
   
   // Ensure helper surfaces exist.

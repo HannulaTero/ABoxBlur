@@ -1,4 +1,5 @@
-// Simple passthrough fragment shader
+// Simple passthrough fragment shader.
+// As own shader just in case if needed.
 varying vec2 vCoord;
 
 void main()

@@ -58,7 +58,8 @@ void main()
   vec2 sides  = abs(upper - lower);
   
   
-  // Get the area sum with given corners.  
+  // Get the area sum with given corners.
+  // Turn pixel position into relative coordinates.
   vec4 coords = (corner + 0.5) / FSH_Layout.xyxy;
   vec4 summation = (
     + texture2D(FSH_TexSums, coords.xy) // top-left

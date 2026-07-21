@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"__ABoxBlurUNorm",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"__ABoxBlurUNorm",
+  "parent":{
+    "name":"RGBA8UNORM",
+    "path":"folders/ABoxBlur/RGBA8UNORM.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

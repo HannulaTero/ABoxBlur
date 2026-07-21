@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"__ABoxBlurFloat",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"__ABoxBlurFloat",
+  "parent":{
+    "name":"RGBA32FLOAT",
+    "path":"folders/ABoxBlur/RGBA32FLOAT.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

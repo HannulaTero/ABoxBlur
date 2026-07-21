@@ -1,0 +1,12 @@
+{
+  "$GMShader":"",
+  "%Name":"SHD_ABoxBlurUNorm_PrefixSum_Seed",
+  "name":"SHD_ABoxBlurUNorm_PrefixSum_Seed",
+  "parent":{
+    "name":"Shaders",
+    "path":"folders/ABoxBlur/RGBA8UNORM/Shaders.yy",
+  },
+  "resourceType":"GMShader",
+  "resourceVersion":"2.0",
+  "type":1,
+}

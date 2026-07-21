@@ -5,8 +5,8 @@
 self.Info = function()
 {
   return [
-    $"EXAMPLE [1] Basic",
-    $"Move [MOUSE] to change blur strength.",
+    $"EXAMPLE [1] Basic : Applies blurmask",
+    $"[MOUSE MOVE] Change blur strength.",
     $"Blur strength : {self.blurStrength}"
   ];
 };

@@ -1,0 +1,12 @@
+{
+  "$GMShader":"",
+  "%Name":"SHD_ABoxBlurFloat_PrefixSum_Pass",
+  "name":"SHD_ABoxBlurFloat_PrefixSum_Pass",
+  "parent":{
+    "name":"Shaders",
+    "path":"folders/ABoxBlur/RGBA32FLOAT/Shaders.yy",
+  },
+  "resourceType":"GMShader",
+  "resourceVersion":"2.0",
+  "type":1,
+}

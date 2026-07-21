@@ -17,8 +17,8 @@ surface_set_target(self.surface.src);
   var _y = 0.5 * room_height;
   var _angle = dsin(current_time / 60) * 30;
   draw_clear_alpha(c_black, 0.0);
-  draw_sprite_stretched(SPR_ABoxBlur_Example2_Scene, 0, 0, 0, _w, _h);
-  draw_sprite_ext(SPR_ABoxBlur_Example1, 0, _x, _y, 3, 3, _angle, c_white, 1.0);
+  draw_sprite_stretched(SPR_ABoxBlur_Example_Puupaa, 0, 0, 0, _w, _h);
+  draw_sprite_ext(SPR_ABoxBlur_Example_HelloWorld, 0, _x, _y, 2, 2, _angle, c_white, 1.0);
 }
 surface_reset_target();
 

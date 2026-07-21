@@ -15,17 +15,22 @@ switch(keyboard_key)
   }
   case ord("2"): {
     instance_destroy(PAR_ABoxBlur_Example);
-    instance_create_depth(0, 0, 0, OBJ_ABoxBlur_Example2_Shapes);
+    instance_create_depth(0, 0, 0, OBJ_ABoxBlur_Example2_BlurAxis);
     break;
   }
   case ord("3"): {
     instance_destroy(PAR_ABoxBlur_Example);
-    instance_create_depth(0, 0, 0, OBJ_ABoxBlur_Example3_Draw);
+    instance_create_depth(0, 0, 0, OBJ_ABoxBlur_Example3_Shapes);
     break;
   }
   case ord("4"): {
     instance_destroy(PAR_ABoxBlur_Example);
-    instance_create_depth(0, 0, 0, OBJ_ABoxBlur_Example4_DoF);
+    instance_create_depth(0, 0, 0, OBJ_ABoxBlur_Example4_Draw);
+    break;
+  }
+  case ord("5"): {
+    instance_destroy(PAR_ABoxBlur_Example);
+    instance_create_depth(0, 0, 0, OBJ_ABoxBlur_Example5_DoF);
     break;
   }
 }

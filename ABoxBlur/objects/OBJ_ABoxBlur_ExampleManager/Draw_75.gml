@@ -1,4 +1,5 @@
 /// @desc DRAW HUD.
+gpu_set_blendmode_ext_sepalpha(bm_src_alpha, bm_inv_src_alpha, bm_one, bm_inv_src_alpha);
 
 gpu_push_state();
 {
@@ -7,6 +8,7 @@ gpu_push_state();
   draw_set_halign(fa_left);
   draw_set_valign(fa_top);
   
+  
   // Preparations.
   var _x = 0;
   var _y = 0;
@@ -14,11 +16,13 @@ gpu_push_state();
   var _h = room_height;
   var _text = "";
   
+  
   // Get information.
   with(PAR_ABoxBlur_Example)
   {
     _text = string_join_ext("\n  ", self.Info());
   }
+  
   
   // Draw the Info-backplate and text.
   var _textH = string_height(_text) + 16;
@@ -28,8 +32,15 @@ gpu_push_state();
   
   // Get Manager information.
   _text = "Press NUMBERS to change example.";
+  
+  if (ABOXBLUR_FALLBACK == true)
+  {
+    _text += "\nUsing fallback rgba8unorm-version!";
+  }
+  
   _textH = string_height(_text) + 16;
   _y = (_h - _textH);
+  
   
   // Draw the Manager-backplate and text.
   draw_sprite_stretched_ext(SPR_ABoxBlur_Example_Backplate, 0, 0, _y, _w, _textH, c_black, 0.75);

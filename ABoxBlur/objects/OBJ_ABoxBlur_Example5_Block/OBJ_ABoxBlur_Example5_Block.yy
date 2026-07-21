@@ -1,21 +1,21 @@
 {
   "$GMObject":"",
-  "%Name":"OBJ_ABoxBlur_Example5_DoF",
+  "%Name":"OBJ_ABoxBlur_Example5_Block",
   "eventList":[
-    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":75,"eventType":8,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
-    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":12,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":1,"eventType":3,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
-  "name":"OBJ_ABoxBlur_Example5_DoF",
+  "name":"OBJ_ABoxBlur_Example5_Block",
   "overriddenProperties":[],
   "parent":{
-    "name":"Example 5 Depth of Field",
-    "path":"folders/ABoxBlur x Examples/Example 5 Depth of Field.yy",
+    "name":"Scene",
+    "path":"folders/ABoxBlur x Examples/Example 5 Depth of Field/Scene.yy",
   },
   "parentObjectId":{
-    "name":"PAR_ABoxBlur_Example",
-    "path":"objects/PAR_ABoxBlur_Example/PAR_ABoxBlur_Example.yy",
+    "name":"PAR_ABoxBlur_Example5",
+    "path":"objects/PAR_ABoxBlur_Example5/PAR_ABoxBlur_Example5.yy",
   },
   "persistent":false,
   "physicsAngularDamping":0.1,
@@ -34,7 +34,10 @@
   "resourceType":"GMObject",
   "resourceVersion":"2.0",
   "solid":false,
-  "spriteId":null,
+  "spriteId":{
+    "name":"SPR_ABoxBlur_Example5_Block",
+    "path":"sprites/SPR_ABoxBlur_Example5_Block/SPR_ABoxBlur_Example5_Block.yy",
+  },
   "spriteMaskId":null,
   "visible":true,
 }

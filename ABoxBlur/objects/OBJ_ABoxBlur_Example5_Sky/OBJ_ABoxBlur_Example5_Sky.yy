@@ -1,15 +1,20 @@
 {
   "$GMObject":"",
-  "%Name":"PAR_ABoxBlur_Example5",
-  "eventList":[],
+  "%Name":"OBJ_ABoxBlur_Example5_Sky",
+  "eventList":[
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":72,"eventType":8,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+  ],
   "managed":true,
-  "name":"PAR_ABoxBlur_Example5",
+  "name":"OBJ_ABoxBlur_Example5_Sky",
   "overriddenProperties":[],
   "parent":{
     "name":"Scene",
     "path":"folders/ABoxBlur x Examples/Example 5 Depth of Field/Scene.yy",
   },
-  "parentObjectId":null,
+  "parentObjectId":{
+    "name":"PAR_ABoxBlur_Example5",
+    "path":"objects/PAR_ABoxBlur_Example5/PAR_ABoxBlur_Example5.yy",
+  },
   "persistent":false,
   "physicsAngularDamping":0.1,
   "physicsDensity":0.5,

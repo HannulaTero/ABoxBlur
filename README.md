@@ -1,5 +1,5 @@
 # ABoxBlur
-### [GameMaker] Do arbitrarily sized box blur with help of prefix sum.
+### [GameMaker] Arbitrarily sized box-blur for any pixel.
 
 Use with ABoxBlur(_dst, _src, _blur, _strength, _fallback) 
 - dst is destination surface

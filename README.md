@@ -1,7 +1,8 @@
 # ABoxBlur
 ### [GameMaker] Arbitrarily sized box-blur for any pixel.
+<img width="128" height="128" align="right" alt="icon-ABoxBlur" src="https://github.com/user-attachments/assets/5a01e534-d401-4cf3-830b-33c822d7cc68" />
 
-Use with ABoxBlur(_dst, _src, _blur, _strength, _fallback) 
+Use with `ABoxBlur(_dst, _src, _blur, _strength, _fallback)`
 - dst is destination surface
 - src is source surface
 - blur-mask is surface, which tells how strongly blur should be applied.

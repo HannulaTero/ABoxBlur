@@ -80,7 +80,7 @@ void main()
   // Get area coverage, used to average the sum.
   float areaSize = (sides.x * sides.y);
   vec4 average = (summation / max(1.0, areaSize));
-  gl_FragData[0] = average; 
+  gl_FragColor = average; 
 }
 
 

@@ -6,9 +6,9 @@ depth = -1000;
 
 
 // Camera position and target.
-self.camera       = camera_create();
-self.viewMatrix   = matrix_build_identity();
-self.projMatrix   = matrix_build_identity();
+self.camera     = camera_create();
+self.viewMatrix = matrix_build_identity();
+self.projMatrix = matrix_build_identity();
 
 self.fov    = 60.0;
 self.znear  = 1.0;
@@ -30,3 +30,4 @@ self.zup = 1.0;
 self.len = 512.0;
 self.dir = 0.0;
 self.rot = 0.0;
+

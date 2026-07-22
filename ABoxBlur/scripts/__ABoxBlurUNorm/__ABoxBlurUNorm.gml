@@ -24,8 +24,6 @@ function __ABoxBlurUNorm(_dst, _src, _blur, _hstrength, _vstrength)
   
   var _layoutW = surface_get_width(_src);
   var _layoutH = surface_get_height(_src);
-  var _texelsW = (1.0 / _layoutW);
-  var _texelsH = (1.0 / _layoutH);
   var _previosShader = shader_current();
   
 
@@ -56,7 +54,7 @@ function __ABoxBlurUNorm(_dst, _src, _blur, _hstrength, _vstrength)
 
   
   gpu_push_state();
-  gpu_set_colourwriteenable(0,0,0,1);
+  gpu_set_colourwriteenable(0, 0, 0, 1);
   surface_set_target(_dst);
   draw_clear_alpha(c_black, 1.0);
   surface_reset_target();
@@ -125,10 +123,10 @@ function __ABoxBlurUNorm(_dst, _src, _blur, _hstrength, _vstrength)
     {
       // Get uniforms.
       var _FSH_Jump   = shader_get_uniform(SHD_ABoxBlurUNorm_PrefixSum_Pass, "FSH_Jump");
-      var _FSH_Texels = shader_get_uniform(SHD_ABoxBlurUNorm_PrefixSum_Pass, "FSH_Texels");
+      var _FSH_Layout = shader_get_uniform(SHD_ABoxBlurUNorm_PrefixSum_Pass, "FSH_Layout");
     
       // Set uniforms, which don't change with loop.
-      shader_set_uniform_f(_FSH_Texels, _texelsW, _texelsH);
+      shader_set_uniform_f(_FSH_Layout, _layoutW, _layoutH);
       
       
       // Do the horizontal passes.

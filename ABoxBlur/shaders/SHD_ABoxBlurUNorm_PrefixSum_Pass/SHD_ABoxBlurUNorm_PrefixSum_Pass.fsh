@@ -22,7 +22,7 @@
 
 
 // Uniforms.
-uniform vec2 FSH_Texels;
+uniform vec2 FSH_Layout;
 uniform vec2 FSH_Jump;
 
 
@@ -35,7 +35,7 @@ uniform vec2 FSH_Jump;
 
 vec4 Get(vec2 pos)
 {
-  return texture2D(gm_BaseTexture, (pos + 0.5) * FSH_Texels);
+  return texture2D(gm_BaseTexture, (pos + 0.5) / FSH_Layout);
 }
 
 
@@ -53,41 +53,41 @@ void main()
   
   
   // Read the right operand.
-  vec4 rhs = Get(origin);
+  highp vec4 rhs = Get(origin);
   
   
   // Check whether goes outside the boundary.
-  if (any(lessThan(origin - FSH_Jump, vec2(0.0))))
+  if (any(lessThan(origin - FSH_Jump, vec2(-0.5))))
   {
-    gl_FragData[0] = rhs;
+    gl_FragColor = rhs;
     return;
   }
   
   
   // Read the left operand.
-  vec4 lhs = Get(origin - FSH_Jump);
+  highp vec4 lhs = Get(origin - FSH_Jump);
   
   
   // As it is prefix sum, add them together.
   // Dealing with whole numbers is safer than normalized values.
   lhs = floor(lhs * 255.0 + 0.5);
   rhs = floor(rhs * 255.0 + 0.5);
-  vec4 result = (lhs + rhs);
+  highp vec4 result = (lhs + rhs);
   
   
   // Resolve carries over bytes.
   for(int i = 0; i < 3; i++)
   {
-    if (result[i] > 255.5)
+    if (result[i] >= 255.5)
     {
-      result[i] -= 256.0;
+      result[i + 0] -= 256.0;
       result[i + 1] += 1.0;
     }
   }
   
   
   // Normalize the result back to 0 to 1 range.
-  gl_FragData[0] = (result / 255.0);
+  gl_FragColor = (result / 255.0);
 }
 
 

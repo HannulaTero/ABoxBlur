@@ -89,7 +89,7 @@ void main()
   // Store the results.
   // -> This is applied to all color channels,
   //    but with color_writeenable discards all but one.
-  gl_FragData[0] = vec4(average); 
+  gl_FragColor = vec4(average); 
 }
 
 

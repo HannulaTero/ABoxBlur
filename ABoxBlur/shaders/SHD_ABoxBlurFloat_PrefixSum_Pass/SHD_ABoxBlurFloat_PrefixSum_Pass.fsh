@@ -22,7 +22,7 @@ precision highp sampler2D;
 
 
 // Uniforms.
-uniform vec2 FSH_Texels;
+uniform vec2 FSH_Layout;
 uniform vec2 FSH_Jump;
 
 
@@ -35,7 +35,7 @@ uniform vec2 FSH_Jump;
 
 vec4 Get(vec2 pos)
 {
-  return texture2D(gm_BaseTexture, (pos + 0.5) * FSH_Texels);
+  return texture2D(gm_BaseTexture, (pos + 0.5) / FSH_Layout);
 }
 
 
@@ -57,9 +57,9 @@ void main()
   
   
   // Check whether goes outside the boundary.
-  if (any(lessThan(origin - FSH_Jump, vec2(0.0))))
+  if (any(lessThan(origin - FSH_Jump, vec2(-0.5))))
   {
-    gl_FragData[0] = rhs;
+    gl_FragColor = rhs;
     return;
   }
   
@@ -69,7 +69,7 @@ void main()
   
   
   // As it is prefix sum, add them together.
-  gl_FragData[0] = (lhs + rhs);
+  gl_FragColor = (lhs + rhs);
 }
 
 

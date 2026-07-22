@@ -59,7 +59,7 @@ void main()
   blur = abs(blur);
   
   // Store the results.
-  gl_FragData[0] = vec4(vec3(blur), 1.0);
+  gl_FragColor = vec4(vec3(blur), 1.0);
 }
 
 #endregion

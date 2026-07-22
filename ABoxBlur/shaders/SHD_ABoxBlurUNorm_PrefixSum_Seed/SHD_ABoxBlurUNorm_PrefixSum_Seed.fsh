@@ -31,7 +31,7 @@ void main()
 {
   vec4 sample = texture2D(gm_BaseTexture, vCoord);
   float channel = dot(sample, FSH_ChannelMask);
-  gl_FragData[0] = vec4(channel, 0.0, 0.0, 0.0);
+  gl_FragColor = vec4(channel, 0.0, 0.0, 0.0);
 }
 
 

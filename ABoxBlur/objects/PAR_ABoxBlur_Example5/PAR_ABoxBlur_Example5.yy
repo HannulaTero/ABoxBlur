@@ -1,7 +1,9 @@
 {
   "$GMObject":"",
   "%Name":"PAR_ABoxBlur_Example5",
-  "eventList":[],
+  "eventList":[
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+  ],
   "managed":true,
   "name":"PAR_ABoxBlur_Example5",
   "overriddenProperties":[],

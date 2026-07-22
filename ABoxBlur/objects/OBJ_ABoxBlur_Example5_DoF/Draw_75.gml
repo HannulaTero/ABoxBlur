@@ -55,7 +55,7 @@ gpu_pop_state();
 
 // Apply the box-blur.
 ABoxBlur(
-  application_surface,
+  self.surface.dst,
   application_surface,
   self.surface.blur,
   self.blurStrength,
@@ -65,11 +65,10 @@ ABoxBlur(
 
 // Draw the application surface.
 gpu_push_state()
-gpu_set_ztestenable(false);
 {
   var _guiW = display_get_gui_width();
   var _guiH = display_get_gui_height();
-  draw_surface_stretched(application_surface, 0, 0, _guiW, _guiH);
+  draw_surface_stretched(self.surface.dst, 0, 0, _guiW, _guiH);
 }
 gpu_pop_state();
 

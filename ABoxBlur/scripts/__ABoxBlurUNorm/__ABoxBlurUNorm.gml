@@ -55,12 +55,12 @@ function __ABoxBlurUNorm(_dst, _src, _blur, _hstrength, _vstrength)
 #region SET DESTINATION ALPHA TO 1.
 
   
-gpu_push_state();
-gpu_set_colourwriteenable(0,0,0,1);
-surface_set_target(_dst);
-draw_clear_alpha(c_black, 1.0);
-surface_reset_target();
-gpu_pop_state();
+  gpu_push_state();
+  gpu_set_colourwriteenable(0,0,0,1);
+  surface_set_target(_dst);
+  draw_clear_alpha(c_black, 1.0);
+  surface_reset_target();
+  gpu_pop_state();
 
   
 #endregion
@@ -129,7 +129,8 @@ gpu_pop_state();
     
       // Set uniforms, which don't change with loop.
       shader_set_uniform_f(_FSH_Texels, _texelsW, _texelsH);
-    
+      
+      
       // Do the horizontal passes.
       // Offset are used to avoid unnecessary fragments.
       // -> But must allow previous results to be copied over.
@@ -145,7 +146,8 @@ gpu_pop_state();
         ABoxBlur.Swap();
         _woffset = i;
       }
-    
+      
+      
       // Do the vertical passes.
       var _hoffset = 0;
       for(var i = 1; i < _layoutH; i *= 2)
@@ -188,9 +190,7 @@ gpu_pop_state();
     
       // Render to the destination.
       surface_set_target(_dst);
-      draw_surface_stretched(ABoxBlur.tempSrc, 0, 0, 
-        surface_get_width(_dst), surface_get_height(_dst)
-      );
+      draw_surface_stretched(ABoxBlur.tempSrc, 0, 0, _layoutW, _layoutH);
       surface_reset_target();
     }
     shader_reset();

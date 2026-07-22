@@ -1,13 +1,11 @@
 /// @desc 
+
+
+event_inherited();
 depth = -1000;
 
 
-// Because in 3D.
-gpu_set_ztestenable(true);
-gpu_set_sprite_cull(false);
-
 // Camera position and target.
-self.prevCam      = view_camera[0];
 self.camera       = camera_create();
 self.viewMatrix   = matrix_build_identity();
 self.projMatrix   = matrix_build_identity();

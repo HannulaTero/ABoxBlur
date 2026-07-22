@@ -17,10 +17,3 @@ matrix_build_projection_perspective_fov(
   self.znear, self.zfar,
   self.projMatrix
 );
-
-
-// Update the matrixes.
-camera_set_view_mat(self.camera, self.viewMatrix);
-camera_set_proj_mat(self.camera, self.projMatrix);
-view_camera[0] = self.camera;
-

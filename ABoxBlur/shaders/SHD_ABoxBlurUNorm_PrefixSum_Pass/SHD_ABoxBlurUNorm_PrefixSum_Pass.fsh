@@ -78,7 +78,7 @@ void main()
   // Resolve carries over bytes.
   for(int i = 0; i < 3; i++)
   {
-    if (result[i] > 255.0)
+    if (result[i] > 255.5)
     {
       result[i] -= 256.0;
       result[i + 1] += 1.0;

@@ -77,6 +77,7 @@ function __ABoxBlurFloat(_dst, _src, _blur, _hstrength, _vstrength)
     // Set uniforms, which don't change with loop.
     shader_set_uniform_f(_FSH_Texels, _texelsW, _texelsH);
     
+    
     // Do the horizontal passes.
     // Offset are used to avoid unnecessary fragments.
     // -> But must allow previous results to be copied over.
@@ -92,6 +93,7 @@ function __ABoxBlurFloat(_dst, _src, _blur, _hstrength, _vstrength)
       ABoxBlur.Swap();
       _woffset = i;
     }
+    
     
     // Do the vertical passes.
     var _hoffset = 0;
@@ -134,9 +136,7 @@ function __ABoxBlurFloat(_dst, _src, _blur, _hstrength, _vstrength)
     
     // Render to the destination.
     surface_set_target(_dst);
-    draw_surface_stretched(ABoxBlur.tempSrc, 0, 0, 
-      surface_get_width(_dst), surface_get_height(_dst)
-    );
+    draw_surface_stretched(ABoxBlur.tempSrc, 0, 0, _layoutW, _layoutH);
     surface_reset_target();
   }
   shader_reset();

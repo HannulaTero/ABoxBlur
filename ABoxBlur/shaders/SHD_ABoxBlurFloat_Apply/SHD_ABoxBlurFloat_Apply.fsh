@@ -48,6 +48,14 @@ void main()
   dist = max(vec2(1.0), dist);
   
   
+  // Linux and Mac might not support interpolated sampling of float-textures.
+  // -> Force the distance to be whole number.
+  // -> Otherwise area calculation wouldn't work, and there would be dark bands.
+  #ifdef _YY_GLSL_
+    dist = floor(dist + 0.5);
+  #endif
+  
+  
   // Calculate the corners of box-blur as pixels.
   // Used to sample summed-table, clamp properly.
   // Also in pixels, so averaging is easier.

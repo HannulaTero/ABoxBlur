@@ -22,13 +22,13 @@
 * -> This is more cumbersome, requires more passes, but allows higher compatibility.
 * -> You may enforce this use anyways.
 * 
-* @param {Id.Surface} _dst          Where blurred image is stored.
-* @param {Id.Surface} _src          The source image. Can be same as destination.
-* @param {Id.Surface} _blur         How box-blur is applied in source image.
-* @param {Real}       _strength     Multiplier for blur - for normalized blur-texture really important.
-* @param {Bool}       _useFallback  Whether force the use of compatibility version (only rgba8unorm).
+* @param {Id.Surface}       _dst          Where blurred image is stored.
+* @param {Id.Surface}       _src          The source image. Can be same as destination.
+* @param {Id.Surface}       _blur         How box-blur is applied in source image.
+* @param {Real|Array<Real>} _strength     Multiplier for blur - for normalized blur-texture really important.
+* @param {Bool}             _useFallback  Whether force the use of compatibility version (only rgba8unorm).
 */ 
-function ABoxBlur(_dst, _src, _blur, _strength=64.0, _useFallback=false)
+function ABoxBlur(_dst, _src, _blur, _strength=16.0, _useFallback=false)
 {
 //=============================================================
 //
@@ -212,19 +212,23 @@ function ABoxBlur(_dst, _src, _blur, _strength=64.0, _useFallback=false)
     return __ABoxBlurUNorm(_dst, _src, _blur, _hstrength, _vstrength);
   }
   
+  
   // Check whether is not supported.
-  // From own tests HTML5 doesn't work, and GX has too many artefacts -> therefore unusable.
+  // From own tests HTML5 doesn't work, and GX has too many artefacts with float-textures.
   if (surface_format_is_supported(surface_rgba32float) == false)
   || (os_type == os_gxgames) || (os_browser != browser_not_a_browser)
   {
+    // Give single warning to not spam it.
     if (ABoxBlur.hasWarned == false)
     {
       show_debug_message("[ABoxBlur] Required 'rgba32float' is not supported!");
       show_debug_message("[ABoxBlur] -> Using fallback 'rgba8unorm' version!");
       ABoxBlur.hasWarned = true;
     }
+    
     return __ABoxBlurUNorm(_dst, _src, _blur, _hstrength, _vstrength);
   }
+  
   
   // Using float version.
   return __ABoxBlurFloat(_dst, _src, _blur, _hstrength, _vstrength);

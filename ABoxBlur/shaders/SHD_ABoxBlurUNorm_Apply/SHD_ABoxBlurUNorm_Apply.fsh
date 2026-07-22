@@ -51,7 +51,8 @@ void main()
   // -> Therefore blur distance is kept as whole numbers.
   vec2 blur = texture2D(FSH_TexBlur, vCoord).rg;
   vec2 dist = (blur * FSH_Multiply);
-  dist = floor(0.5 + max(vec2(1.0), dist));
+  dist = max(vec2(1.0), dist);
+  dist = floor(dist + 0.5);
   
   
   // Calculate the corners of box-blur as pixels.

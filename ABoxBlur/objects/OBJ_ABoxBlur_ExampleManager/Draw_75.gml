@@ -27,7 +27,7 @@ gpu_push_state();
   // Draw the Info-backplate and text.
   var _textH = string_height(_text) + 16;
   draw_sprite_stretched_ext(SPR_ABoxBlur_Example_Backplate, 0, _x, _y, _w, _textH, c_black, 0.75);
-  draw_text(8, 8, _text);
+  self.DrawText(8, 8, _text);
   
   
   // Get Manager information.
@@ -44,7 +44,7 @@ gpu_push_state();
   
   // Draw the Manager-backplate and text.
   draw_sprite_stretched_ext(SPR_ABoxBlur_Example_Backplate, 0, 0, _y, _w, _textH, c_black, 0.75);
-  draw_text(8, _y + 8, _text);
+  self.DrawText(8, _y + 8, _text);
 }
 gpu_pop_state();
 

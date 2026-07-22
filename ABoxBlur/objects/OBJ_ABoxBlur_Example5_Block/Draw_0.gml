@@ -1,3 +1,1 @@
-/// @desc DRAW BLOCK.
-
-self.DrawBlock();
+/// @desc 

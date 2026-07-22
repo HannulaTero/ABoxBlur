@@ -1,4 +1,4 @@
-/// @desc MOUSE CONTROL.
+/// @desc CAMERA CONTROLS.
 
 
 // Move the camera around in XY-plane.

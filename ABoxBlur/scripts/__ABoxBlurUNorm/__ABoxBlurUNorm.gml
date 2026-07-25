@@ -162,8 +162,8 @@ function __ABoxBlurUNorm(_dst, _src, _blur, _hstrength, _vstrength)
     }
     shader_reset();
     gpu_pop_state();
-  
-  
+    
+    
   #endregion
   //
   //=============================================================

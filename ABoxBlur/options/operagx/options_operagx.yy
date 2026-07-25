@@ -5,6 +5,12 @@
     "FALLBACK":{
       "option_operagx_game_name":"ABoxBlur",
       "option_operagx_mod_game_name":"new_blank",
+      "option_operagx_editUrl":"https://dev.gx.games/games/ad3a1afe-fb64-4367-a9d0-e0276ef2aa95/details",
+      "option_operagx_internalShareUrl":"https://gx.games/games/fwqfk7/aboxblur/tracks/48d7f1d0-ccbc-4b13-a82f-48f114b27fab/",
+      "option_operagx_team_name":"terohannula studio",
+      "option_operagx_team_id":"5663c99f-2482-4893-9d24-5cf9bb4922ef",
+      "option_operagx_version":"1.1.1.23",
+      "option_operagx_next_version":"1.1.1.24",
     },
   },
   "name":"Opera GX",

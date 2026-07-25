@@ -34,7 +34,7 @@ uniform vec2 FSH_Multiply;
 
 
 // Constants.
-const vec4 DECODER = vec4(1.0, 256.0, 65536.0, 16777216.0);
+const highp vec4 DECODER = vec4(1.0, 256.0, 65536.0, 16777216.0);
 
 
 #endregion
@@ -66,30 +66,30 @@ void main()
   
   
   // Get the area sum with given corners.
-  // Turn pixel position into relative coordinates.
+  // -> Turn pixel position into relative coordinates. Pixel coords used for exact location.
+  // -> Turn values into whole numbers. Then it's safer to do calculations.
   vec4 coords = (corner + 0.5) / FSH_Layout.xyxy;
-  vec4 summation = (
-    + texture2D(FSH_TexSums, coords.xy) // top-left
-    + texture2D(FSH_TexSums, coords.zw) // bottom-right
-    - texture2D(FSH_TexSums, coords.xw) // bottom-left
-    - texture2D(FSH_TexSums, coords.zy) // top-right
-  );
+  vec4 sample00 = floor( texture2D(FSH_TexSums, coords.xy) * 255.0 + 0.5 ); // top-left
+  vec4 sample11 = floor( texture2D(FSH_TexSums, coords.zw) * 255.0 + 0.5 ); // bottom-right
+  vec4 sample01 = floor( texture2D(FSH_TexSums, coords.xw) * 255.0 + 0.5 ); // bottom-left
+  vec4 sample10 = floor( texture2D(FSH_TexSums, coords.zy) * 255.0 + 0.5 ); // top-right
+  vec4 areaSum = ((sample00 + sample11) - (sample01 + sample10));
   
   
   // Get area coverage.
-  float areaSize = max(1.0, sides.x * sides.y);
+  highp float areaSize = max(1.0, sides.x * sides.y);
   
   
   // Calculate the average.
   // -> Decoder is divided, and "should" produce correct result.
   // -> This avoids ever actually trying to store large U32 value.
-  float average = dot(summation, (DECODER / areaSize));
+  highp float average = dot(areaSum, (DECODER / areaSize));
   
   
   // Store the results.
   // -> This is applied to all color channels,
   //    but with color_writeenable discards all but one.
-  gl_FragColor = vec4(average); 
+  gl_FragColor = vec4(average / 255.0); 
 }
 
 

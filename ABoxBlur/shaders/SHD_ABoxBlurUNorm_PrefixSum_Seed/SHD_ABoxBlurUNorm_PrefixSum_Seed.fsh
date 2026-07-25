@@ -29,9 +29,9 @@ uniform vec4 FSH_ChannelMask;
 
 void main()
 {
-  vec4 sample = texture2D(gm_BaseTexture, vCoord);
+  vec4 sample   = texture2D(gm_BaseTexture, vCoord);
   float channel = dot(sample, FSH_ChannelMask);
-  gl_FragColor = vec4(channel, 0.0, 0.0, 0.0);
+  gl_FragColor  = vec4(channel, 0.0, 0.0, 0.0);
 }
 
 

@@ -1,6 +1,11 @@
 {
   "$GMMainOptions":"v5",
   "%Name":"Main",
+  "ConfigValues":{
+    "FALLBACK":{
+      "option_gameguid":"e71d5d5c-c8fc-4751-8258-edaf95e4a0ea",
+    },
+  },
   "name":"Main",
   "option_allow_instance_change":false,
   "option_audio_error_behaviour":false,

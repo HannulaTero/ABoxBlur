@@ -53,7 +53,7 @@ void main()
   
   
   // Read the right operand.
-  highp vec4 rhs = Get(origin);
+  vec4 rhs = Get(origin);
   
   
   // Check whether goes outside the boundary.
@@ -65,25 +65,20 @@ void main()
   
   
   // Read the left operand.
-  highp vec4 lhs = Get(origin - FSH_Jump);
+  vec4 lhs = Get(origin - FSH_Jump);
   
   
   // As it is prefix sum, add them together.
   // Dealing with whole numbers is safer than normalized values.
   lhs = floor(lhs * 255.0 + 0.5);
   rhs = floor(rhs * 255.0 + 0.5);
-  highp vec4 result = (lhs + rhs);
+  vec4 result = (lhs + rhs);
   
   
   // Resolve carries over bytes.
-  for(int i = 0; i < 3; i++)
-  {
-    if (result[i] >= 255.5)
-    {
-      result[i + 0] -= 256.0;
-      result[i + 1] += 1.0;
-    }
-  }
+  if (result[0] > 255.5) { result.rg += vec2(-256.0, +1.0); } 
+  if (result[1] > 255.5) { result.gb += vec2(-256.0, +1.0); } 
+  if (result[2] > 255.5) { result.ba += vec2(-256.0, +1.0); } 
   
   
   // Normalize the result back to 0 to 1 range.
